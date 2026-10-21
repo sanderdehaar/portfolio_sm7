@@ -1,40 +1,91 @@
 # Portfolio
 
-React, TypeScript, Vite, Tailwind CSS, and React Router portfolio.
+A personal portfolio website by Sander. Built with React, TypeScript, Vite, Tailwind CSS and React Router. Project data comes from Firebase Firestore.
 
-## Commands
+## Quick start
 
-- `npm install` installs dependencies.
-- `npm run dev` starts the local development server.
-- `npm run build` checks TypeScript and builds for production.
-- `npm run lint` checks the project with Oxlint.
-- `npm run seed:firestore` adds missing project documents from `scripts/project-seed-data.mjs` to Firestore. It does not overwrite existing documents.
+```
+npm install
+npm run dev
+```
 
-## Structure
+Other commands:
 
-- `src/pages` contains route-level pages and composes the Home page flow.
-- `src/pages/ProjectDetailPage.tsx` renders project details from the project data.
-- `src/sections` contains reusable Home, About, Work, and Footer sections.
-- `src/components` contains the parallax image, hover text and staggered text primitives.
-- `src/hooks/useScrollParallax.ts` provides bounded scroll-driven image movement.
-- `src/data/useProjects.ts` loads all project records from the Firestore `projects` collection and reports loading, empty, or permission errors.
-- `scripts/project-seed-data.mjs` contains one-time starter records for the Firestore Admin seeder; the website does not load project data from this file.
-- `src/styles/tokens.css` defines shared colors, typography, grid, and layout tokens for Tailwind.
-- `src/index.css` contains global, responsive section, menu, and motion styles.
-- `public/assets/images` contains the local hero background and logo.
+- `npm run build` checks TypeScript and builds the site into `dist`.
+- `npm run lint` checks the code.
+- `npm run seed:firestore` adds the starter projects to Firestore (see below).
 
-Display text uses Anton; supporting text uses Montserrat. Routes are `/`, `/projects` (Home work anchor), and `/projects/:slug` for data-driven details.
+## Pages and routing
 
-## Firebase projects
+| Route | Page |
+| --- | --- |
+| `/` | Home: hero, about and work sections, footer |
+| `/projects` | Project list (the work section on the Home page) |
+| `/projects/:slug` | Project detail page |
+| anything else | Redirects to `/` |
 
-1. The Firebase web configuration is in the ignored `.env` file. Keep `.env` private and out of version control.
-2. Deploy `firestore.rules`. This allows public reads only from `/projects/{projectId}` and denies all writes and all other reads.
-3. Each project document must include `number`, `slug`, `title`, `category`, `year`, `description`, `image`, `heroImage`, `heroOverlay` (`color`, `opacity`) and `content` (an ordered array of `{ type: "text", text }` or `{ type: "image", src, alt, caption? }`). Add an optional `projectUrl` string containing the live project URL to show the “View project” button on its detail page.
+Routes are set in `src/App.tsx`.
 
-Deploy the rules with `firebase deploy --only firestore:rules` after authenticating the Firebase CLI. Firestore creates the `projects` collection automatically when the first document is written.
+## Environment variables
 
-To seed the initial five projects, authenticate Google Application Default Credentials for the Firebase project (for example, with `gcloud auth application-default login`) and run `npm run seed:firestore`. In PowerShell, set `$env:GCLOUD_PROJECT = "portfolio-sm7"` first if needed. The seeder uses the Admin SDK and only creates documents that do not already exist. Do not put a service-account key in `.env` or commit it.
+Create a `.env` file in the project root. Do not commit it.
 
-Image fields accept either a hosted image URL or a path from `public`, for example `/assets/images/bolzano/hero.jpg`. Keep local assets in `public/assets/images` and store their public paths in Firestore. The Firebase web configuration is public client configuration; data access must be protected by Firestore rules.
+```
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+```
 
-The detail page uses the large hero image and ordered content blocks. It intentionally does not render a second title/description summary or a separate banner image. The app has no local project-data fallback; the collection must be seeded and readable for project cards and detail routes to appear.
+You can find these values in the Firebase console under Project settings. They are public client settings, so data is protected by Firestore rules, not by hiding them.
+
+## How project data works
+
+- The site reads all documents from the Firestore `projects` collection (`src/data/useProjects.ts`).
+- Projects are sorted by `number`. A project without a `number` is not shown.
+- There is no local fallback. If Firestore is empty or not readable, no projects appear.
+
+Each project document needs:
+
+- `number`, `slug`, `title`, `category`, `year`, `description`
+- `image` (card image) and `heroImage` (big image on the detail page)
+- `heroOverlay`: `{ color, opacity }`
+- `content`: a list of blocks, either `{ type: "text", text }` or `{ type: "image", src, alt, caption? }`
+- `projectUrl` (optional): shows a "View project" button
+
+Image fields accept a full URL or a path from `public`, for example `/assets/images/projects/1/image.png`.
+
+## Firebase setup
+
+1. Deploy the rules: `firebase deploy --only firestore:rules`. The rules allow public reads on `/projects` and block all writes.
+2. Seed the starter projects: log in with `gcloud auth application-default login`, then run `npm run seed:firestore`. It only creates missing documents and never overwrites existing ones.
+3. Never put a service-account key in `.env` or in Git.
+
+## Deploying (Vercel)
+
+1. Push the project to GitHub (optional but easiest).
+2. Import the repo in Vercel. Build command: `npm run build`. Output folder: `dist`.
+3. Add the `VITE_FIREBASE_*` variables in Vercel under Settings > Environment Variables.
+4. Add a `vercel.json` so direct links like `/projects/my-project` work:
+
+```json
+{
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
+```
+
+## Folder guide
+
+- `src/pages` has the pages (Home, Projects, Project detail).
+- `src/sections` has the Home sections: About, Work and Footer.
+- `src/components` has small shared parts: parallax image, hover text and staggered text.
+- `src/hooks` has scroll hooks: parallax, replay and in-view.
+- `src/data` has the Firebase setup, the project type and the project loader.
+- `src/styles/tokens.css` has shared colors, fonts and layout values.
+- `src/index.css` has the global and responsive styles.
+- `public/assets/images` has local images and the logo.
+- `scripts` has the Firestore seed script and the starter data.
+
+Fonts: Anton for headings, Montserrat for body text.
