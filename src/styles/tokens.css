@@ -1,0 +1,42 @@
+:root {
+  color-scheme: dark;
+  --site-black: #030303;
+  --site-white: #fff;
+  --site-cyan: #08d2eb;
+  --site-cyan-deep: #00a9c0;
+  --site-muted: #bcbcbc;
+  --site-grid: rgb(255 255 255 / 8%);
+  --site-menu-grid: rgb(0 0 0 / 6%);
+  --site-footer-grid: rgb(0 0 0 / 12%);
+  --site-font-body: 'Montserrat', Arial, sans-serif;
+  --site-font-display: 'Anton', Impact, sans-serif;
+  --color-black: var(--site-black);
+  --color-white: var(--site-white);
+  --color-cyan: var(--site-cyan);
+  --color-cyan-deep: var(--site-cyan-deep);
+  --color-muted: var(--site-muted);
+  --color-grid: var(--site-grid);
+  --font-body: var(--site-font-body);
+  --font-display: var(--site-font-display);
+  --site-header-height: 120px;
+  --site-gutter: 3.15vw;
+  --menu-button-size: 42px;
+  --grid-columns: 8;
+  --grid-stroke: 1px;
+  --grid-opacity: 0.08;
+  --hero-title-size: clamp(7.8rem, 15.2vw, 14rem);
+  --hero-title-leading: 0.87;
+  --hero-title-left: 29%;
+  --hero-title-word-offset: 0.62em;
+  --hero-title-transform: translateY(-50%);
+}
+
+@theme inline {
+  --color-black: var(--site-black);
+  --color-white: var(--site-white);
+  --color-cyan: var(--site-cyan);
+  --color-cyan-deep: var(--site-cyan-deep);
+  --color-muted: var(--site-muted);
+  --font-sans: var(--site-font-body);
+  --font-display: var(--site-font-display);
+}
