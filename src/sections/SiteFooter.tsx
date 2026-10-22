@@ -47,7 +47,7 @@ export function SiteFooter() {
             <a href="/#contact">Contact</a>
           </nav>
           <div className="footer-details">
-            <a className="footer-email footer-cv" href="/assets/cv.pdf" target="_blank" rel="noreferrer">My CV</a>
+            <a className="footer-email footer-cv" href="/assets/pdf/cv.pdf" target="_blank" rel="noreferrer">My CV</a>
             <a className="footer-email" href="mailto:sanderdehaart@live.nl">sanderdehaart@live.nl</a>
             <p className="footer-copyright">©2026</p>
           </div>

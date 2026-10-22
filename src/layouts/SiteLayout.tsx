@@ -96,7 +96,15 @@ export function SiteLayout() {
             to="/"
             aria-label="Sander, home"
             className={`site-logo${logoOnLight || menuOpen ? ' is-dark' : ''}`}
-            onClick={() => setMenuOpen(false)}
+            onClick={(event) => {
+              setMenuOpen(false)
+              if (location.pathname !== '/') return
+
+              event.preventDefault()
+              const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+              if (lenisRef.current) lenisRef.current.scrollTo(0, { immediate: reduceMotion })
+              else window.scrollTo({ top: 0, left: 0, behavior: reduceMotion ? 'instant' : 'smooth' })
+            }}
           >
             <img src="/assets/images/logo.svg" alt="" />
           </Link>
@@ -123,9 +131,9 @@ export function SiteLayout() {
             <a href="/#contact" aria-label="Contact" onClick={() => setMenuOpen(false)}><HoverSwapText text="Contact" /></a>
           </div>
           <div className="menu-socials">
-            <a href="https://www.instagram.com/">Instagram</a>
-            <a href="https://www.linkedin.com/">LinkedIn</a>
+            <a href="https://www.linkedin.com/in/sander-de-haart-03558025a/?isSelfProfile=true">LinkedIn</a>
             <a href="mailto:sanderdehaart@live.nl">sanderdehaart@live.nl</a>
+            <a href="/assets/pdf/cv.pdf" target="_blank" rel="noreferrer">My CV</a>
           </div>
         </nav>
 
